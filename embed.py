@@ -95,11 +95,11 @@ def main():
     parser = argparse.ArgumentParser(description='Train Hyperbolic Embeddings')
     parser.add_argument('-checkpoint', default='/tmp/hype_embeddings.pth',
                         help='Where to store the model checkpoint')
-    parser.add_argument('-dset', type=str, required=True,
-                        help='Dataset identifier')
-    parser.add_argument('-dim', type=int, default=20,
+    parser.add_argument('-dset', type=str,
+                        help='Dataset identifier', default='wordnet/grid_nodes.csv')
+    parser.add_argument('-dim', type=int, default=2,
                         help='Embedding dimension')
-    parser.add_argument('-manifold', type=str, default='lorentz',
+    parser.add_argument('-manifold', type=str, default='poincare',
                         choices=MANIFOLDS.keys())
     parser.add_argument('-model', type=str, default='distance',
                         choices=MODELS.keys(), help='Energy function model')
