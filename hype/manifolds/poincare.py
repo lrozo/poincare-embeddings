@@ -52,6 +52,17 @@ class PoincareManifold(EuclideanManifold):
             d_p = d_p * ((1 - p_sqnorm) ** 2 / 4).expand_as(d_p)
         return d_p
 
+    # def init_weights(self, w):
+    #     grid_limits = [-0.5, 0.5, -0.5, 0.5]
+    #     x_coord = np.linspace(grid_limits[0], grid_limits[1], 5)
+    #     y_coord = np.linspace(grid_limits[3], grid_limits[2], 5)
+    #     grid_embeddings = np.zeros((5 * 5, 2))
+    #     node = 0
+    #     for node_y in range(5):
+    #         for node_x in range(5):
+    #             grid_embeddings[node, :] = np.array([x_coord[node_x], y_coord[node_y]])
+    #             node += 1
+    #     w.weight.data = th.from_numpy(grid_embeddings)
 
 class Distance(Function):
     @staticmethod
