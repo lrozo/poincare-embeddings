@@ -96,7 +96,7 @@ def main():
     parser.add_argument('-checkpoint', default='/tmp/hype_embeddings.pth',
                         help='Where to store the model checkpoint')
     parser.add_argument('-dset', type=str,
-                        help='Dataset identifier', default='wordnet/grid_nodes.csv')
+                        help='Dataset identifier', default='robot_planning/grid_nodes.csv')
     parser.add_argument('-dim', type=int, default=2,
                         help='Embedding dimension')
     parser.add_argument('-manifold', type=str, default='poincare',

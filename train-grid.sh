@@ -14,7 +14,7 @@ python3 embed.py \
        -ndproc 4 \
        -model distance \
        -manifold poincare \
-       -dset wordnet/grid_nodes.csv \
+       -dset robot_planning/grid_nodes.csv \
        -checkpoint grid_nodes.pth \
        -batchsize 10 \
        -eval_each 1 \
