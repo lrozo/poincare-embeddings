@@ -52,6 +52,34 @@ class PoincareManifold(EuclideanManifold):
             d_p = d_p * ((1 - p_sqnorm) ** 2 / 4).expand_as(d_p)
         return d_p
 
+    # Special non-associative and non-commutative operation
+    # which is closed in the Poincare ball.
+    # Performed column-wise here.
+    def mobius_addition(self, X, Y):
+        scalar_product = np.sum(X * Y, axis=0)
+        norm2X = np.sum(X * X, axis=0)
+        norm2Y = np.sum(Y * Y, axis=0)
+
+        return (X * (1 + 2 * scalar_product + norm2Y) + Y * (1 - norm2X)) / (
+                1 + 2 * scalar_product + norm2X * norm2Y
+        )
+
+    def exp(self, X, U):
+        norm_U = np.linalg.norm(U, axis=0)
+        # Handle the case where U is null.
+        W = U * np.divide(
+            np.tanh(norm_U / (1 - np.sum(X * X, axis=0))),
+            norm_U,
+            out=np.zeros_like(U),
+            where=norm_U != 0,
+        )
+        return self.mobius_addition(X, W)
+
+    def log(self, X, Y):
+        W = self.mobius_addition(-X, Y)
+        norm_W = np.linalg.norm(W, axis=0)
+        return (1 - np.sum(X * X, axis=0)) * np.arctanh(norm_W) * W / norm_W
+
     # def init_weights(self, w):
     #     grid_limits = [-0.5, 0.5, -0.5, 0.5]
     #     x_coord = np.linspace(grid_limits[0], grid_limits[1], 5)
@@ -96,3 +124,4 @@ class Distance(Function):
         gu = Distance.grad(u, v, squnorm, sqvnorm, sqdist, ctx.eps)
         gv = Distance.grad(v, u, sqvnorm, squnorm, sqdist, ctx.eps)
         return g.expand_as(gu) * gu, g.expand_as(gv) * gv, None
+
