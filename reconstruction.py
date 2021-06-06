@@ -15,10 +15,21 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from hype import MANIFOLDS, MODELS
 
+
+def plot_geodesics(embeddings_array, ref_id, target_id, geo_color, geodesics_steps):
+    tangent_vec = manifold.log(embeddings_array[ref_id, :], embeddings[target_id, :])
+    t = np.linspace(0.01, 1, geodesics_steps)
+    geodesics = [embeddings[ref_id, :]]
+    for step in t:
+        geodesics.append(manifold.exp(embeddings[ref_id, :], step * tangent_vec))
+    geodesics_array = np.array(geodesics)
+    plt.plot(geodesics_array[:, 0], geodesics_array[:, 1], color=geo_color)
+
+
 np.random.seed(42)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-file', help='Path to checkpoint', default='grid_nodes.pth.best')
+parser.add_argument('-file', help='Path to checkpoint', default='grid_nodes7.pth.best')
 parser.add_argument('-workers', default=1, type=int, help='Number of workers')
 parser.add_argument('-sample', type=int, help='Sample size')
 parser.add_argument('-quiet', action='store_true', default=False)
@@ -31,21 +42,6 @@ if not os.path.exists(dset):
 
 format = 'hdf5' if dset.endswith('.h5') else 'csv'
 dset = load_adjacency_matrix(dset, format, objects=chkpnt['objects'])
-
-colors = cm.rainbow(np.linspace(0, 1, 25))
-#circle = visualization.PoincareDisk(point_type='ball')
-plt.figure(figsize=(10, 10))
-ax = plt.subplot(111)
-# circle.add_points(gs.array([[0, 0]]))
-#circle.set_ax(ax)
-#circle.draw(ax=ax)
-embeddings = chkpnt['embeddings'].numpy()
-for i_embedding, embedding in enumerate(embeddings):
-    plt.scatter(embedding[0], embedding[1], alpha=1.0, color=colors[i_embedding],
-                label=i_embedding)
-    plt.annotate(chkpnt['objects'][i_embedding], (embedding[0], embedding[1]))
-# plt.legend()
-plt.show()
 
 sample_size = args.sample or len(dset['ids'])
 sample = np.random.choice(len(dset['ids']), size=sample_size, replace=False)
@@ -79,3 +75,20 @@ meanrank, maprank = eval_reconstruction(adj, model, workers=args.workers,
 etime = timeit.default_timer() - tstart
 
 print(f'Mean rank: {meanrank}, mAP rank: {maprank}, time: {etime}')
+
+colors = cm.rainbow(np.linspace(0, 1, 49))
+plt.figure(figsize=(10, 10))
+ax = plt.subplot(111)
+circle = plt.Circle((0, 0), radius=1., color='black', fill=False)
+ax.add_artist(circle)
+embeddings = chkpnt['embeddings'].numpy()
+for i_embedding, embedding in enumerate(embeddings):
+    node = chkpnt['objects'][i_embedding]
+    plt.scatter(embedding[0], embedding[1], alpha=1.0, color=colors[node])
+    plt.annotate(node, (embedding[0], embedding[1]))
+
+targets = np.array([1, 6, 14, 20, 21, 34, 35, 48])
+for target in targets:
+    plot_geodesics(embeddings, ref_id=0, target_id=target, geo_color=colors[target], geodesics_steps=30)
+plt.show()
+
