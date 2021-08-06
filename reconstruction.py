@@ -29,7 +29,7 @@ def plot_geodesics(embeddings_array, ref_id, target_id, geo_color, geodesics_ste
 np.random.seed(42)
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-file', help='Path to checkpoint', default='grid_nodes7.pth.best')
+parser.add_argument('-file', help='Path to checkpoint', default='grid_nodes9.pth.best')
 parser.add_argument('-workers', default=1, type=int, help='Number of workers')
 parser.add_argument('-sample', type=int, help='Sample size')
 parser.add_argument('-quiet', action='store_true', default=False)
@@ -76,7 +76,7 @@ etime = timeit.default_timer() - tstart
 
 print(f'Mean rank: {meanrank}, mAP rank: {maprank}, time: {etime}')
 
-colors = cm.rainbow(np.linspace(0, 1, 49))
+colors = cm.rainbow(np.linspace(0, 1, 81))
 plt.figure(figsize=(10, 10))
 ax = plt.subplot(111)
 circle = plt.Circle((0, 0), radius=1., color='black', fill=False)
